@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { Container, ButtonAdm, ButtonAdmText, FormText, Input ,ButtonOrder, ModalContent, PlanContent, ModalHeader, Header, ModalContainer, AlaresText, PlusPlans ,PlanSpeedText, TitleText, Content, PlansContainer, PlanContainer, PlanName, CloseButton } from './styles';
+import { Container, ButtonAdm, ButtonAdmText, FormText, Input, ButtonOrder, ModalContent, PlanContent, ModalHeader, Header, ModalContainer, AlaresText, PlusPlans, PlanSpeedText, TitleText, Content, PlansContainer, PlanContainer, PlanName, CloseButton } from './styles';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 
@@ -57,81 +57,94 @@ function Home() {
         let input = event.target
         input.value = phoneMask(input.value)
         setCustomerPhone(input.value)
-      }
-      
-      const phoneMask = (value) => {
+    }
+
+    const phoneMask = (value) => {
         if (!value) return ""
-        value = value.replace(/\D/g,'')
-        value = value.replace(/(\d{2})(\d)/,"($1) $2")
-        value = value.replace(/(\d)(\d{4})$/,"$1-$2")
+        value = value.replace(/\D/g, '')
+        value = value.replace(/(\d{2})(\d)/, "($1) $2")
+        value = value.replace(/(\d)(\d{4})$/, "$1-$2")
         return value
-      }
+    }
 
     useEffect(() => {
         getPlans()
     }, []);
 
-  return (
-    <Container>
-        <Header>
-            <AlaresText>Alares</AlaresText>
-            <ButtonAdm onClick={() => navigate("/admin")}>
-                <ButtonAdmText>Acesso administrativo</ButtonAdmText>
-            </ButtonAdm>
-        </Header>
-        <Content>
-            <TitleText>Escolha o melhor plano para você!</TitleText>
-            {showModal && (
-                <ModalContainer>
-                    <ModalHeader>
-                        <CloseButton onClick={() => setShowModal(false)}>
-                            X
-                        </CloseButton>
-                    </ModalHeader>
-                    <TitleText>Preencha seus dados para adquirir o plano</TitleText>
-                    <ModalContent>
-                        <FormText>Nome</FormText>
-                        <Input type='text' onChange={(e) => setCustomerName(e.target.value)} required/>
-                        <FormText>E-mail</FormText>
-                        <Input type='text' onChange={(e) => setCustomerEmail(e.target.value)} required/>
-                        <FormText>Telefone</FormText>
-                        <Input type='text' onChange={(e) => handlePhone(e)} required/>
-                    </ModalContent>
+    return (
+        <Container>
+            <Header>
+                <AlaresText>Alares</AlaresText>
+                <ButtonAdm onClick={() => navigate("/admin")}>
+                    <ButtonAdmText>Acesso administrativo</ButtonAdmText>
+                </ButtonAdm>
+            </Header>
+            <Content>
+                <TitleText>Escolha o melhor plano para você!</TitleText>
+                {showModal && (
+                    <ModalContainer>
+                        <ModalHeader>
+                            <CloseButton onClick={() => setShowModal(false)}>
+                                X
+                            </CloseButton>
+                        </ModalHeader>
+                        <TitleText>Preencha seus dados para adquirir o plano</TitleText>
+                        <ModalContent>
+                            <FormText>Nome</FormText>
+                            <Input type='text' onChange={(e) => setCustomerName(e.target.value)} required />
+                            <FormText>E-mail</FormText>
+                            <Input type='text' onChange={(e) => setCustomerEmail(e.target.value)} required />
+                            <FormText>Telefone</FormText>
+                            <Input type='text' onChange={(e) => handlePhone(e)} required />
+                        </ModalContent>
                         <ButtonOrder onClick={() => handleOrder()}>
                             <ButtonAdmText>Contratar</ButtonAdmText>
                         </ButtonOrder>
-                </ModalContainer>
-            )}
-            <PlansContainer style={{opacity: showModal ? 0.5 : 1}}>
-                {plans && plans.map((plan) => (
-                    <PlanContainer>
-                        <PlanContent>
-                            <PlanName>{plan.name}</PlanName>
-                            <PlanSpeedText>{plan.speedNumber} {plan.prefix}</PlanSpeedText>
-                            <PlusPlans>
-                                +
-                            </PlusPlans>
-                            <PlanSpeedText>Wi-fi</PlanSpeedText>
-                            <PlusPlans>
-                                +
-                            </PlusPlans>
-                            <PlanSpeedText>Jogos</PlanSpeedText>
-                            <PlusPlans>
-                                +
-                            </PlusPlans>
-                            <PlanSpeedText>Canais de filmes</PlanSpeedText>
-                        </PlanContent>
-                    <ButtonOrder onClick={() => {
-                            setPlanId(plan._id)
-                            setShowModal(true)
-                        }}>
-                        <ButtonAdmText>Contrate já</ButtonAdmText>
-                    </ButtonOrder>
-                    </PlanContainer>
-                ))}
-            </PlansContainer>
-        </Content>
-     </Container>);
+                    </ModalContainer>
+                )}
+                <PlansContainer style={{ opacity: showModal ? 0.5 : 1 }}>
+                    {plans && plans.map((plan) => (
+                        <PlanContainer style={{ background: plan.recommend ? "#5A53F7" : "#fff" }}>
+                            <PlanContent>
+                                <PlanName style={{ color: plan.recommend ? "#fff" : "#5A53F7" }}>{plan.name}</PlanName>
+                                <PlanSpeedText style={{ color: plan.recommend ? "#fff" : "#5A53F7" }} >{plan.speedNumber} {plan.prefix}</PlanSpeedText>
+                                {plan.wifi && (
+                                    <>
+                                        <PlusPlans>
+                                            +
+                                        </PlusPlans>
+                                        <PlanSpeedText style={{ color: plan.recommend ? "#fff" : "#5A53F7" }}>Wi-fi</PlanSpeedText>
+                                    </>
+                                )}
+                                {plan.games && (
+                                    <>
+                                        <PlusPlans>
+                                            +
+                                        </PlusPlans>
+                                        <PlanSpeedText style={{ color: plan.recommend ? "#fff" : "#5A53F7" }}>Jogos</PlanSpeedText>
+                                    </>
+                                )}
+                                {plan.movies && (
+                                    <>
+                                        <PlusPlans>
+                                            +
+                                        </PlusPlans>
+                                        <PlanSpeedText style={{ color: plan.recommend ? "#fff" : "#5A53F7" }}>Canais de filmes</PlanSpeedText>
+                                    </>
+                                )}
+                            </PlanContent>
+                            <PlanSpeedText style={{ fontWeight: 'bold', color: plan.recommend ? "#fff" : "#5A53F7" }}>Por: R$ {plan.price}</PlanSpeedText>
+                            <ButtonOrder onClick={() => {
+                                setPlanId(plan._id)
+                                setShowModal(true)
+                            }}>
+                                <ButtonAdmText>Contrate já</ButtonAdmText>
+                            </ButtonOrder>
+                        </PlanContainer>
+                    ))}
+                </PlansContainer>
+            </Content>
+        </Container>);
 }
 
 export default Home;

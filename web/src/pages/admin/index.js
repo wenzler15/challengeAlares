@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { Container, ButtonAdm, ButtonAdmText, FormText, Input ,ButtonOrder, ModalContent, PlanContent, ModalHeader, Header, ModalContainer, AlaresText, PlusPlans ,PlanSpeedText, TitleText, Content, PlansContainer, PlanContainer, PlanName, CloseButton } from './styles';
+import { Container, ButtonAdm, ButtonAdmText, Header, SubLineLeftContainer, Buttons, Content, AlaresText, TitleText, ButtonsContainer, ButtonContainer, FormText, TableContainer, Line, SubLine, NormalText, NewRegister, StatusContainer } from './styles';
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 
@@ -8,11 +8,8 @@ import api from '../../services/api';
 
 function Home() {
     const [plans, setPlans] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [customerName, setCustomerName] = useState("");
-    const [customerEmail, setCustomerEmail] = useState("");
-    const [customerPhone, setCustomerPhone] = useState("");
-    const [planId, setPlanId] = useState("");
+    const [orders, setOrders] = useState([]);
+    const [tableSelect, setTableSelect] = useState("plan");
 
     const navigate = useNavigate();
 
@@ -27,111 +24,121 @@ function Home() {
         }
     }
 
-    const handleOrder = async () => {
-        if (customerName === '' || customerEmail === '' || customerPhone === "") {
-            toast.error("Favor preencher todos os campos");
-        } else {
-            if (customerEmail.indexOf("@") > 0 && customerEmail.indexOf(".") > 0) {
-                try {
-                    const toSend = {
-                        customerName,
-                        customerEmail,
-                        customerPhone,
-                        planId
-                    }
+    const getOrders = async () => {
+        try {
+            const response = await api.get("/orders");
 
-                    await api.post("/order", toSend);
-
-                    toast.success("Plano contratado com sucesso!");
-                    setShowModal(false);
-                } catch (err) {
-                    toast.error("Não foi possível contratar o plano");
-                }
-            } else {
-                toast.error("Favor preencher um e-mail válido");
-            }
+            setOrders(response.data)
+        } catch (err) {
+            console.log("erro", err)
+            toast.error("Não foi possível listar os pedidos");
         }
     }
 
-    const handlePhone = (event) => {
-        let input = event.target
-        input.value = phoneMask(input.value)
-        setCustomerPhone(input.value)
-      }
-      
-      const phoneMask = (value) => {
-        if (!value) return ""
-        value = value.replace(/\D/g,'')
-        value = value.replace(/(\d{2})(\d)/,"($1) $2")
-        value = value.replace(/(\d)(\d{4})$/,"$1-$2")
-        return value
-      }
+    const deletePlan = async (id) => {
+        try {
+            await api.delete(`/plan/${id}`)
+            toast.success("Plano deletado com sucesso!");
+            window.location.reload()
+        } catch (err) {
+            console.log("erro", err);
+            toast.error("Não foi possível deleter o plano");
+        }
+    }
+
+    const deleteOrder = async (id) => {
+        try {
+            await api.delete(`/order/${id}`)
+            toast.success("Pedido deletado com sucesso!");
+            window.location.reload()
+        } catch (err) {
+            console.log("erro", err);
+            toast.error("Não foi possível deleter o pedido");
+        }
+    }
 
     useEffect(() => {
         getPlans()
+        getOrders()
     }, []);
 
-  return (
-    <Container>
-        <Header>
-            <AlaresText>Alares</AlaresText>
-            <ButtonAdm onClick={() => navigate("/")}>
-                <ButtonAdmText>Acesso usuário</ButtonAdmText>
-            </ButtonAdm>
-        </Header>
-        <Content>
-            <TitleText>Acesso administrativo</TitleText>
-            {showModal && (
-                <ModalContainer>
-                    <ModalHeader>
-                        <CloseButton onClick={() => setShowModal(false)}>
-                            X
-                        </CloseButton>
-                    </ModalHeader>
-                    <TitleText>Preencha seus dados para adquirir o plano</TitleText>
-                    <ModalContent>
-                        <FormText>Nome</FormText>
-                        <Input type='text' onChange={(e) => setCustomerName(e.target.value)} required/>
-                        <FormText>E-mail</FormText>
-                        <Input type='text' onChange={(e) => setCustomerEmail(e.target.value)} required/>
-                        <FormText>Telefone</FormText>
-                        <Input type='text' onChange={(e) => handlePhone(e)} required/>
-                    </ModalContent>
-                        <ButtonOrder onClick={() => handleOrder()}>
-                            <ButtonAdmText>Contratar</ButtonAdmText>
-                        </ButtonOrder>
-                </ModalContainer>
-            )}
-            <PlansContainer style={{opacity: showModal ? 0.5 : 1}}>
-                {plans && plans.map((plan) => (
-                    <PlanContainer>
-                        <PlanContent>
-                            <PlanName>{plan.name}</PlanName>
-                            <PlanSpeedText>{plan.speedNumber} {plan.prefix}</PlanSpeedText>
-                            <PlusPlans>
-                                +
-                            </PlusPlans>
-                            <PlanSpeedText>Wi-fi</PlanSpeedText>
-                            <PlusPlans>
-                                +
-                            </PlusPlans>
-                            <PlanSpeedText>Jogos</PlanSpeedText>
-                            <PlusPlans>
-                                +
-                            </PlusPlans>
-                            <PlanSpeedText>Canais de filmes</PlanSpeedText>
-                        </PlanContent>
-                    <ButtonOrder onClick={() => {
-                            setPlanId(plan._id)
-                            setShowModal(true)
-                        }}>
-                        <ButtonAdmText>Contrate já</ButtonAdmText>
-                    </ButtonOrder>
-                    </PlanContainer>
-                ))}
-            </PlansContainer>
-        </Content>
-     </Container>);
+    return (
+        <Container>
+            <Header>
+                <AlaresText>Alares</AlaresText>
+                <ButtonAdm onClick={() => navigate("/")}>
+                    <ButtonAdmText>Acesso usuário</ButtonAdmText>
+                </ButtonAdm>
+            </Header>
+            <Content>
+                <TitleText>Acesso administrativo</TitleText>
+                <ButtonsContainer>
+                    <ButtonContainer onClick={() => setTableSelect("plan")} style={{ background: tableSelect === 'plan' ? '#77F3AE' : '#fff', border: tableSelect === 'plan' ? 'none' : '1px solid #848484' }}>
+                        <FormText style={{ color: tableSelect === 'plan' ? '#5A53F7' : '#848484' }}>Planos</FormText>
+                    </ButtonContainer>
+                    <ButtonContainer onClick={() => setTableSelect("order")} style={{ background: tableSelect === 'order' ? '#77F3AE' : '#fff', border: tableSelect === 'order' ? 'none' : '1px solid #848484' }}>
+                        <FormText style={{ color: tableSelect === 'order' ? '#5A53F7' : '#848484' }}>Pedidos</FormText>
+                    </ButtonContainer>
+                </ButtonsContainer>
+                <TableContainer>
+                    {tableSelect === 'plan' ? (
+                        <NewRegister onClick={() => navigate("/plan")}>Adicionar novo</NewRegister>
+                    ) : (
+                        <> </>
+                    )}
+                    {tableSelect === 'plan' && plans.length > 0 ? plans.map((item, index) => (
+                        <Line style={{ background: index % 2 === 0 ? "#DFDEF6" : "#CDCCE5" }}>
+                            <SubLine>
+                                <FormText>{item.name}</FormText>
+                            </SubLine>
+                            <SubLine>
+                                <SubLineLeftContainer>
+                                    <NormalText>{item.speedNumber} {item.prefix}</NormalText>
+                                    {item.wifi && (
+                                        <NormalText>Wi-fi</NormalText>
+                                    )}
+                                    {item.games && (
+                                        <NormalText>Game</NormalText>
+                                    )}
+                                    {item.movies && (
+                                        <NormalText>Canal de filmes</NormalText>
+                                    )}
+                                    {item.recommend && (
+                                        <NormalText>Recomendação</NormalText>
+                                    )}
+                                </SubLineLeftContainer>
+                                <Buttons style={{ background: "#5A53F7" }} onClick={() => navigate(`/plan?id=${item._id}`)}>
+                                    <NormalText style={{ color: "#fff" }}>Alterar</NormalText>
+                                </Buttons>
+                                <Buttons style={{ background: "#DF7676" }} onClick={() => deletePlan(item._id)}>
+                                    <NormalText style={{ color: "#fff" }}>Remover</NormalText>
+                                </Buttons>
+                            </SubLine>
+                        </Line>
+                    )) : orders.map((item, index) => (
+                        <Line style={{ background: index % 2 === 0 ? "#DFDEF6" : "#CDCCE5" }}>
+                            <SubLine>
+                                <FormText>Pedido {index + 1} - {item.planId?.name ? item.planId.name : 'excluído'}</FormText>
+                            </SubLine>
+                            <SubLine>
+                                <SubLineLeftContainer style={{ width: '75%' }}>
+                                    <NormalText>{item.customerName}</NormalText>
+                                    <NormalText>{item.customerEmail}</NormalText>
+                                    <NormalText>{item.customerPhone}</NormalText>
+                                    <StatusContainer style={{ background: item.status === 'DONE' ? '#77F3AE' : '#5A53F7', color: item.status === 'DONE' ? '#5A53F7' : '#77F3AE' }}>{item.status}</StatusContainer>
+                                </SubLineLeftContainer>
+                                <Buttons style={{ background: "#5A53F7" }} onClick={() => navigate(`/order?id=${item._id}`)}>
+                                    <NormalText style={{ color: "#fff" }}>Alterar</NormalText>
+                                </Buttons>
+                                <Buttons style={{ background: "#DF7676" }} onClick={() => deleteOrder(item._id)}>
+                                    <NormalText style={{ color: "#fff" }}>Remover</NormalText>
+                                </Buttons>
+                            </SubLine>
+                        </Line>
+                    ))}
+                </TableContainer>
+            </Content>
+        </Container>);
 }
 
 export default Home;

@@ -18,7 +18,7 @@ export const Header = styled.div`
 export const ButtonAdm = styled.div`
     background: #77F3AE;
     padding: 5px;
-    width: 160px;
+    width: 120px;
     border-radius: 10px;
     cursor: pointer;
     margin-right: 20px;
@@ -82,7 +82,7 @@ export const PlanName = styled.text`
 export const PlanSpeedText = styled.text`
     color: #5A53F7;
     font-size: 24px;
-    font-weight: 600;
+    font-weight: bold;
 `;
 
 export const PlusPlans = styled.text`
@@ -98,8 +98,7 @@ export const ButtonOrder = styled.div`
     width: 160px;
     border-radius: 10px;
     cursor: pointer;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin-top: 20px;
     margin-left: 15px;
 `;
 
@@ -130,12 +129,10 @@ export const CloseButton = styled.text`
 `;
 
 export const ModalContent = styled.div`
-    width: 100%;
     margin-left: 15px;
     display: flex;
     text-align: left;
     flex-direction: column;
-    justify-content: start;
     margin-top: 10px;
 `;
 
@@ -148,7 +145,74 @@ export const Input = styled.input`
     border-radius: 10px;
     margin-top: 5px;
     margin-bottom: 10px;
-    border: none;
+    border: 1px solid #000;
+    width: 250px;
     background: #F8F8F8;
     padding: 5px;
 `;
+
+export const ButtonsContainer = styled.div`
+    display: flex;
+    width: 100%;
+    justify-content: center;
+`;
+
+export const ButtonContainer = styled.div`
+    width: 200px;
+    border-radius: 10px;
+    border: 1px solid #848484;
+    margin-top: 30px;
+    margin-left: 30px;
+`;
+
+export const TableContainer = styled.div`
+    margin-top: 40px;
+    text-align: end;
+`;
+
+export const NewRegister = styled.text`
+    cursor: pointer;
+    text-decoration: underline;
+    color: #5A53F7;
+`;
+
+export const Line = styled.div`
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    text-align: start;
+    justify-content: center;
+`;
+
+export const SubLine = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+`;
+
+export const SubLineLeftContainer = styled.div`
+    width: 65%;
+    display: flex;
+    justify-content: space-between;
+`;
+
+export const NormalText = styled.text`
+    font-size: 16px;
+    color: #848484;
+`;
+
+export const Buttons = styled.div`
+    border-radius: 10px;
+    width: 70px;
+    text-align: center;
+    cursor: pointer;
+`;
+
+export const StatusContainer = styled.div`
+    border-radius: 10px;
+    width: 100px;
+    font-size: 12px;
+    text-align: center;
+    padding-top: 2px;
+`;
+
